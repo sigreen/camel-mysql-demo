@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configures the Camel Context -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" >
+	    <property name="serverName" value="localhost" />
+	    <property name="databaseName" value="test" />
+	    <property name="port" value="3306" />
+	    <property name="user" value="root" />
+	    <property name="password" value="Abcd1234" />
+	</bean>
+
+	<!-- configure the Camel SQL component to use the JDBC data source -->
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<camelContext id="camelContext-c9569397-1c97-48b8-9aec-120f145c3e9d"
+		xmlns="http://camel.apache.org/schema/spring">
+		<!-- here is a sample which processes the input files (leaving them in 
+			place - see the 'noop' flag) then performs content based routing on the message 
+			using XPath -->
+		<route id="_route1">
+			<from uri="timer:foo?period=5s" />
+			<to uri="sql:select * from shop;" />
+			<log message="Here are the records from shop: ${body}" />
+		</route>
+	</camelContext>
+</beans>
